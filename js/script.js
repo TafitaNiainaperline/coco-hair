@@ -229,11 +229,6 @@ function checkout() {
             <div class="payment-methods">
               <div class="payment-method">
                 <span class="method-label">MVola</span>
-                <span class="method-value">+261 34 70 20 583</span>
-              </div>
-              <div class="payment-method">
-                <span class="method-label">Orange Money</span>
-                <span class="method-value">+261 34 70 20 583</span>
               </div>
             </div>
           </div>
@@ -367,7 +362,7 @@ ${itemsList}
 
 TOTAL: ${order.total.toLocaleString()} Ar
 
-EN ATTENTE DE PAIEMENT via MVola/Orange Money`;
+EN ATTENTE DE PAIEMENT via MVola`;
 
   // 1. Envoyer WhatsApp au propriétaire
   const ownerPhone = '34702058'; // Numéro sans +261
@@ -402,7 +397,7 @@ Votre commande #${order.id} a été confirmée.
 
 TOTAL: ${order.total.toLocaleString()} Ar
 
-Veuillez envoyer le paiement via MVola ou Orange Money au: +261 34 70 20 583
+Veuillez envoyer le paiement via MVola
 
 Après paiement, votre commande sera livrée ${deliveryLabel.toLowerCase()}.
 
