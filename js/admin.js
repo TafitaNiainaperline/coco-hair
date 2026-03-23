@@ -196,7 +196,7 @@ function closeOrderModal() {
   document.getElementById('orderModal').classList.remove('active');
 }
 
-function updateOrderStatus(orderId, newStatus) {
+async function updateOrderStatus(orderId, newStatus) {
   if (!newStatus) return;
 
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
@@ -213,6 +213,20 @@ function updateOrderStatus(orderId, newStatus) {
     });
 
     localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+
+    // Mettre à jour dans Firestore
+    if (order.docId) {
+      try {
+        await updateDoc(doc(db, 'orders', order.docId), {
+          status: newStatus,
+          history: order.history
+        });
+        console.log('✅ Statut mis à jour dans Firestore');
+      } catch (error) {
+        console.error('❌ Erreur mise à jour Firestore:', error);
+      }
+    }
+
     loadOrders();
     loadStats();
 
