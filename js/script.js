@@ -293,14 +293,13 @@ async function confirmCheckout(total) {
   // Sauvegarder dans Firestore
   try {
     await addDoc(collection(db, 'orders'), order);
-    console.log('✅ Commande sauvegardée dans Firestore:', order);
 
     // Garder aussi dans localStorage comme backup
     const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
     orders.push(order);
     localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
   } catch (error) {
-    console.error('❌ Erreur sauvegarde Firestore:', error);
+    console.error('Erreur sauvegarde Firestore:', error);
     // Fallback: sauvegarder juste en localStorage
     const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
     orders.push(order);
@@ -440,9 +439,8 @@ function handleContactForm(e) {
         showToast('Message envoyé avec succès!');
         document.getElementById('contactForm').reset();
       },
-      error => {
+      () => {
         showToast('Erreur lors de l\'envoi du message');
-        console.log('Erreur:', error);
       }
     );
   } else {
