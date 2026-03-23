@@ -451,3 +451,17 @@ function handleFormSubmit(e) {
     document.querySelector('.contact-form').submit();
   }, 1500);
 }
+
+// Exposer les fonctions globalement pour les onclick HTML
+window.addToCart = addToCart;
+window.toggleCart = toggleCart;
+window.removeFromCart = removeFromCart;
+window.updateCart = updateCart;
+window.checkout = checkout;
+window.closeCheckout = closeCheckout;
+window.confirmCheckout = confirmCheckout;
+window.closeOrderModal = closeOrderModal;
+window.showToast = showToast;
+window.toggleNavMenu = toggleNavMenu;
+window.closeNavMenu = closeNavMenu;
+window.showSection = showSection;
