@@ -683,7 +683,7 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
   position: fixed;
   top: 0;
   left: 0;
-  width: 280px;
+  width: 240px;
   height: 100vh;
   background: var(--green-dark);
   color: var(--cream);
@@ -749,11 +749,8 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
 }
 
 .nav-link {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  gap: 12px;
-  padding: 14px 16px;
+  display: block;
+  padding: 12px 14px;
   border-radius: 10px;
   text-decoration: none;
   color: var(--gold);
