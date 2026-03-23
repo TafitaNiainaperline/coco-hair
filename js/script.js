@@ -284,9 +284,9 @@ async function confirmCheckout(total) {
     deliveryFee: deliveryFee,
     total: totalWithDelivery,
     delivery,
-    status: 'en attente de paiement',
+    status: 'en attente',
     history: [
-      { status: 'en attente de paiement', date: new Date().toLocaleString('fr-FR') }
+      { status: 'en attente', date: new Date().toLocaleString('fr-FR') }
     ]
   };
 

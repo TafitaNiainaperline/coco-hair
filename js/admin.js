@@ -104,7 +104,7 @@ function displayOrders(orders, ordersList) {
         </span>
         <select class="status-select" id="select-${order.id}" onchange="handleStatusChange(${order.id}, this)">
           <option value="">Changer statut</option>
-          <option value="en attente de paiement">En attente</option>
+          <option value="en attente">En attente</option>
           <option value="payé">Payé</option>
           <option value="expédié">Expédié</option>
           <option value="livré">Livré</option>
@@ -165,7 +165,7 @@ function viewOrder(orderId) {
       <div style="display:flex;gap:12px;align-items:flex-end;">
         <div style="flex:1;">
           <select id="statusSelect-${order.id}" class="status-select" style="width:100%;padding:12px;font-size:14px;">
-            <option value="en attente de paiement" ${order.status === 'en attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
+            <option value="en attente" ${order.status === 'en attente' ? 'selected' : ''}>En attente de paiement</option>
             <option value="payé" ${order.status === 'payé' ? 'selected' : ''}>Payé</option>
             <option value="expédié" ${order.status === 'expédié' ? 'selected' : ''}>Expédié</option>
             <option value="livré" ${order.status === 'livré' ? 'selected' : ''}>Livré</option>
@@ -316,7 +316,7 @@ function contactCustomer(orderId) {
   const itemsList = order.items.map(i => `${i.name}`).join(', ');
 
   const statusMessages = {
-    'en attente de paiement': 'En attente de votre paiement',
+    'en attente': 'En attente de votre paiement',
     'payé': 'Votre paiement a été reçu',
     'expédié': `Votre commande est expédiée`,
     'livré': 'Votre commande a été livrée'
@@ -392,7 +392,7 @@ function loadStats() {
 function displayStats(orders) {
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
-  const pendingCount = orders.filter(o => o.status === 'en attente de paiement').length;
+  const pendingCount = orders.filter(o => o.status === 'en attente').length;
   const paidCount = orders.filter(o => o.status === 'payé').length;
 
   let statsHTML = `
