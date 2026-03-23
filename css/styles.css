@@ -23,14 +23,14 @@ body { font-family: 'Jost', sans-serif; background: var(--cream); color: var(--t
 nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
   display: flex; justify-content: space-between; align-items: center;
-  padding: 10px 60px;
+  padding: 4px 60px;
   background: #FDF8F0;
   border-bottom: 1px solid rgba(27,58,45,0.1);
 }
 
 .logo-wrap { display: flex; align-items: center; gap: 12px; text-decoration: none; height: auto; }
-.logo-wrap img { flex-shrink: 0; }
-.logo-text { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 700; color: var(--green-dark); letter-spacing: 1px; display: flex; align-items: center; }
+.logo-wrap img { flex-shrink: 0; width: 50px; height: 50px; }
+.logo-text { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 700; color: var(--green-dark); letter-spacing: 1px; display: flex; align-items: center; }
 .logo-text span { color: var(--gold); }
 
 nav ul { display: flex; gap: 36px; list-style: none; align-items: center; }
