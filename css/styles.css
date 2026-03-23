@@ -755,7 +755,7 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
   padding: 14px 16px;
   border-radius: 10px;
   text-decoration: none;
-  color: rgba(255,255,255,0.7);
+  color: var(--gold);
   transition: all 0.2s;
   font-size: 14px;
   font-weight: 500;
