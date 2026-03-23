@@ -462,3 +462,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 });
+
+// Exposer les fonctions globalement pour les onclick HTML
+window.showSection = showSection;
+window.viewOrder = viewOrder;
+window.closeOrderModal = closeOrderModal;
+window.updateOrderStatus = updateOrderStatus;
+window.deleteOrder = deleteOrder;
+window.contactCustomer = contactCustomer;
+window.filterOrders = filterOrders;
+window.refreshOrders = refreshOrders;
+window.exportOrdersPDF = exportOrdersPDF;
+window.logout = logout;
+window.toggleSidebar = toggleSidebar;
+window.saveSettings = saveSettings;
