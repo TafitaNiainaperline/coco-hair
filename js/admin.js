@@ -370,7 +370,7 @@ function saveSettings() {
   alert('Paramètres enregistrés');
 }
 
-function showSection(sectionId) {
+function showSection(sectionId, navElement) {
   // Cacher toutes les sections
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -382,9 +382,8 @@ function showSection(sectionId) {
   }
 
   // Marquer le lien de navigation comme actif
-  const navItem = document.querySelector(`a[onclick*="showSection('${sectionId}')"]`);
-  if (navItem) {
-    navItem.classList.add('active');
+  if (navElement) {
+    navElement.classList.add('active');
   }
 
   if (sectionId === 'stats') {
