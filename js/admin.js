@@ -150,12 +150,19 @@ function viewOrder(orderId) {
 
     <div class="order-detail-section">
       <h3>Statut actuel</h3>
-      <select id="statusSelect-${order.id}" class="status-select" style="width:100%;padding:12px;font-size:14px;" onchange="updateOrderStatus(${order.id}, this.value)">
-        <option value="en attente de paiement" ${order.status === 'en attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
-        <option value="payé" ${order.status === 'payé' ? 'selected' : ''}>Payé</option>
-        <option value="expédié" ${order.status === 'expédié' ? 'selected' : ''}>Expédié</option>
-        <option value="livré" ${order.status === 'livré' ? 'selected' : ''}>Livré</option>
-      </select>
+      <div style="display:flex;gap:12px;align-items:flex-end;">
+        <div style="flex:1;">
+          <select id="statusSelect-${order.id}" class="status-select" style="width:100%;padding:12px;font-size:14px;">
+            <option value="en attente de paiement" ${order.status === 'en attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
+            <option value="payé" ${order.status === 'payé' ? 'selected' : ''}>Payé</option>
+            <option value="expédié" ${order.status === 'expédié' ? 'selected' : ''}>Expédié</option>
+            <option value="livré" ${order.status === 'livré' ? 'selected' : ''}>Livré</option>
+          </select>
+        </div>
+        <button class="btn-primary" onclick="updateOrderStatus(${order.id}, document.getElementById('statusSelect-${order.id}').value)" style="padding:12px 24px;white-space:nowrap;">
+          Enregistrer
+        </button>
+      </div>
     </div>
 
     <div class="order-detail-section">
@@ -209,12 +216,7 @@ function updateOrderStatus(orderId, newStatus) {
     loadOrders();
     loadStats();
 
-    // Mettre à jour le select sans recharger le modal
-    const statusSelect = document.getElementById(`statusSelect-${orderId}`);
-    if (statusSelect) {
-      statusSelect.value = newStatus;
-    }
-
+    // Actualiser le modal pour afficher les changements
     viewOrder(orderId);
     showToast(`Statut mis à jour: ${newStatus}`);
   }
