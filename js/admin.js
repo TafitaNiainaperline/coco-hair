@@ -208,7 +208,7 @@ function updateOrderStatus(orderId, newStatus) {
     localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
     loadOrders();
     loadStats();
-    closeOrderModal();
+    viewOrder(orderId);
     showToast(`Statut mis à jour: ${newStatus}`);
   }
 }
