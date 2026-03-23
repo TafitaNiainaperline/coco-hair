@@ -3,6 +3,22 @@ import { db, collection, addDoc } from './firebase-config.js';
 
 let cart = [];
 
+// Exposer les fonctions globalement (avant DOMContentLoaded)
+const exposeGlobalFunctions = () => {
+  window.addToCart = addToCart;
+  window.toggleCart = toggleCart;
+  window.removeFromCart = removeFromCart;
+  window.updateCart = updateCart;
+  window.checkout = checkout;
+  window.closeCheckout = closeCheckout;
+  window.confirmCheckout = confirmCheckout;
+  window.closeOrderModal = closeOrderModal;
+  window.showToast = showToast;
+  window.toggleNavMenu = toggleNavMenu;
+  window.closeNavMenu = closeNavMenu;
+  window.showSection = showSection;
+};
+
 // Charger le panier et la session au démarrage
 window.addEventListener('DOMContentLoaded', () => {
   const saved = sessionStorage.getItem('cocoHairCart');
@@ -10,6 +26,9 @@ window.addEventListener('DOMContentLoaded', () => {
     cart = JSON.parse(saved);
     updateCart();
   }
+
+  // Exposer les fonctions après leur définition
+  exposeGlobalFunctions();
 
   // Ajouter l'événement du formulaire de contact
   const contactForm = document.getElementById('contactForm');
@@ -451,17 +470,3 @@ function handleFormSubmit(e) {
     document.querySelector('.contact-form').submit();
   }, 1500);
 }
-
-// Exposer les fonctions globalement pour les onclick HTML
-window.addToCart = addToCart;
-window.toggleCart = toggleCart;
-window.removeFromCart = removeFromCart;
-window.updateCart = updateCart;
-window.checkout = checkout;
-window.closeCheckout = closeCheckout;
-window.confirmCheckout = confirmCheckout;
-window.closeOrderModal = closeOrderModal;
-window.showToast = showToast;
-window.toggleNavMenu = toggleNavMenu;
-window.closeNavMenu = closeNavMenu;
-window.showSection = showSection;
