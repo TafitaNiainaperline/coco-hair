@@ -302,8 +302,27 @@ function filterOrders() {
 }
 
 function loadStats() {
-  const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
+  try {
+    // Charger depuis Firestore
+    const q = query(collection(db, 'orders'));
 
+    onSnapshot(q, (snapshot) => {
+      const orders = [];
+      snapshot.forEach((doc) => {
+        orders.push(doc.data());
+      });
+
+      displayStats(orders);
+    });
+  } catch (error) {
+    console.error('❌ Erreur Firestore stats:', error);
+    // Fallback: charger depuis localStorage
+    const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
+    displayStats(orders);
+  }
+}
+
+function displayStats(orders) {
   const totalOrders = orders.length;
   const totalRevenue = orders.reduce((sum, o) => sum + o.total, 0);
   const pendingCount = orders.filter(o => o.status === 'en attente de paiement').length;
