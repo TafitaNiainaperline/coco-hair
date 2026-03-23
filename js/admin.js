@@ -1,7 +1,5 @@
-// Import Firebase
 import { db, collection, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc, where, getDocs } from './firebase-config.js';
 
-// Charger les commandes au démarrage
 window.addEventListener('DOMContentLoaded', () => {
   loadOrders();
   loadStats();
@@ -9,13 +7,11 @@ window.addEventListener('DOMContentLoaded', () => {
   migrateStatusLabels();
 });
 
-// Rafraîchir les commandes chaque 30 secondes
 setInterval(() => {
   loadOrders();
   loadStats();
 }, 30000);
 
-// Recharger quand on revient sur la page (tab switch)
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     loadOrders();
@@ -32,13 +28,11 @@ async function migrateStatusLabels() {
       const order = docSnapshot.data();
       let needsUpdate = false;
 
-      // Vérifier si le statut contient l'ancien format
       if (order.status === 'en attente de paiement') {
         order.status = 'en attente';
         needsUpdate = true;
       }
 
-      // Vérifier l'historique
       if (order.history && Array.isArray(order.history)) {
         order.history = order.history.map(entry => ({
           ...entry,
@@ -47,19 +41,16 @@ async function migrateStatusLabels() {
         needsUpdate = true;
       }
 
-      // Mettre à jour si changements nécessaires
       if (needsUpdate) {
         await updateDoc(docSnapshot.ref, {
           status: order.status,
           history: order.history || []
         });
-        console.log('✅ Migration statut:', order.id);
       }
     });
 
-    console.log('✅ Migration des statuts complétée');
   } catch (error) {
-    console.error('❌ Erreur migration:', error);
+    console.error('Erreur migration:', error);
   }
 }
 
@@ -67,7 +58,6 @@ function loadOrders() {
   const ordersList = document.getElementById('ordersList');
 
   try {
-    // Charger depuis Firestore avec real-time updates
     const q = query(collection(db, 'orders'), orderBy('id', 'desc'));
 
     onSnapshot(q, (snapshot) => {
@@ -76,9 +66,7 @@ function loadOrders() {
         orders.push({ id: doc.data().id, docId: doc.id, ...doc.data() });
       });
 
-      console.log('📦 Commandes Firestore chargées:', orders.length, orders);
 
-      // Sauvegarder aussi en localStorage pour les mises à jour
       localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
 
       if (orders.length === 0) {
@@ -88,12 +76,11 @@ function loadOrders() {
 
       displayOrders(orders, ordersList);
     }, (error) => {
-      console.error('❌ Erreur Firestore:', error);
-      // Fallback: charger depuis localStorage
+      console.error('Erreur Firestore:', error);
       loadOrdersFromLocalStorage();
     });
   } catch (error) {
-    console.error('❌ Erreur chargement Firestore:', error);
+    console.error('Erreur chargement Firestore:', error);
     loadOrdersFromLocalStorage();
   }
 }
@@ -252,47 +239,37 @@ function closeOrderModal() {
 async function updateOrderStatus(orderId, newStatus) {
   if (!newStatus) return;
 
-  console.log('🔄 Tentative de mise à jour - orderId:', orderId, 'newStatus:', newStatus);
 
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
   const order = orders.find(o => o.id == orderId);
 
-  console.log('📦 Commande trouvée:', order);
 
   if (!order) {
-    console.error('❌ Commande introuvable avec ID:', orderId);
+    console.error('Commande introuvable avec ID:', orderId);
     showToast('Erreur: commande introuvable');
     return;
   }
 
-  const oldStatus = order.status;
   order.status = newStatus;
 
-  // Ajouter à l'historique
   if (!order.history) order.history = [];
   order.history.push({
     status: newStatus,
     date: new Date().toLocaleString('fr-FR')
   });
 
-  // Mettre à jour localStorage
   localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
-  console.log('✅ Statut sauvegardé en localStorage:', oldStatus, '→', newStatus);
 
-  // Mettre à jour dans Firestore
   if (order.docId) {
     try {
       await updateDoc(doc(db, 'orders', order.docId), {
         status: newStatus,
         history: order.history
       });
-      console.log('✅ Statut mis à jour dans Firestore avec docId:', order.docId);
     } catch (error) {
-      console.error('❌ Erreur mise à jour Firestore:', error);
+      console.error('Erreur mise à jour Firestore:', error);
     }
   } else {
-    console.warn('⚠️ Pas de docId, cherche par id dans Firestore');
-    // Fallback: chercher par id si docId n'existe pas
     try {
       const q = query(collection(db, 'orders'), where('id', '==', orderId));
       const snapshot = await getDocs(q);
@@ -302,19 +279,16 @@ async function updateOrderStatus(orderId, newStatus) {
           status: newStatus,
           history: order.history
         });
-        console.log('✅ Statut mis à jour dans Firestore');
       }
     } catch (error) {
-      console.error('❌ Erreur recherche Firestore:', error);
+      console.error('Erreur recherche Firestore:', error);
     }
   }
 
-  // Actualiser l'affichage
   showToast(`Statut mis à jour: ${newStatus}`);
   loadOrders();
   loadStats();
 
-  // Actualiser le modal si ouvert
   const modal = document.getElementById('orderModal');
   if (modal && modal.classList.contains('active')) {
     viewOrder(orderId);
@@ -411,7 +385,6 @@ function filterOrders() {
 
 function loadStats() {
   try {
-    // Charger depuis Firestore
     const q = query(collection(db, 'orders'));
 
     onSnapshot(q, (snapshot) => {
@@ -424,7 +397,6 @@ function loadStats() {
     });
   } catch (error) {
     console.error('❌ Erreur Firestore stats:', error);
-    // Fallback: charger depuis localStorage
     const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
     displayStats(orders);
   }
