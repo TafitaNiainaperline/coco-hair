@@ -616,9 +616,9 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
   nav { padding: 10px 16px; }
   nav .logo-wrap img { width: 40px !important; height: 40px !important; }
   nav .logo-text { font-size: 16px; }
-  .nav-logo { margin-bottom: 15px; padding-bottom: 15px; }
-  .nav-links { margin-top: 30px; }
-  .nav-sidebar { padding-top: 80px; }
+  .nav-logo { margin-bottom: 10px; padding-bottom: 10px; }
+  .nav-links { margin-top: 50px; }
+  .nav-sidebar { padding-top: 120px; }
   nav ul { gap: 16px; }
   .hero { flex-direction: column; }
   .hero-left { padding: 30px 20px; }
