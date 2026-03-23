@@ -229,6 +229,7 @@ function checkout() {
             <div class="payment-methods">
               <div class="payment-method">
                 <span class="method-label">MVola</span>
+                <span class="method-value">+261 34 70 20 583</span>
               </div>
             </div>
           </div>
@@ -397,7 +398,7 @@ Votre commande #${order.id} a été confirmée.
 
 TOTAL: ${order.total.toLocaleString()} Ar
 
-Veuillez envoyer le paiement via MVola
+Veuillez envoyer le paiement via MVola au: +261 34 70 20 583
 
 Après paiement, votre commande sera livrée ${deliveryLabel.toLowerCase()}.
 
