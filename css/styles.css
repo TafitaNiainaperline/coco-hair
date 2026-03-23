@@ -750,13 +750,12 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
 
 .nav-link {
   display: block;
-  padding: 0;
+  padding: 8px 0 8px 12px;
   text-decoration: none;
   color: var(--gold);
   transition: all 0.2s;
   font-size: 13px;
   font-weight: 500;
-  text-align: left;
 }
 
 .nav-link:hover {
