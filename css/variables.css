@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600&display=swap');
+
+:root {
+  /* Colors - Primary */
+  --green-dark:  #1B3A2D;
+  --green-mid:   #2D6A4F;
+  --green-light: #52B788;
+
+  /* Colors - Secondary */
+  --cream:       #FDF8F0;
+  --gold:        #C9A84C;
+  --gold-light:  #F0D080;
+  --white:       #FFFFFF;
+
+  /* Colors - Text */
+  --text-dark:   #1B2D20;
+  --text-mid:    #4A6741;
+  --text-light:  #8BAF85;
+
+  /* Colors - Accent */
+  --pink-soft:   #FFF0EC;
+}
