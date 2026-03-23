@@ -371,11 +371,21 @@ function saveSettings() {
 }
 
 function showSection(sectionId) {
+  // Cacher toutes les sections
   document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-  document.getElementById(sectionId + 'Section').classList.add('active');
-  event.target.closest('.nav-item').classList.add('active');
+  // Afficher la section sélectionnée
+  const section = document.getElementById(sectionId + 'Section');
+  if (section) {
+    section.classList.add('active');
+  }
+
+  // Marquer le lien de navigation comme actif
+  const navItem = document.querySelector(`a[onclick*="showSection('${sectionId}')"]`);
+  if (navItem) {
+    navItem.classList.add('active');
+  }
 
   if (sectionId === 'stats') {
     loadStats();
