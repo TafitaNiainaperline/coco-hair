@@ -1,5 +1,5 @@
 // Import Firebase
-import { db, collection, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc } from './firebase-config.js';
+import { db, collection, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc, where, getDocs } from './firebase-config.js';
 
 // Charger les commandes au démarrage
 window.addEventListener('DOMContentLoaded', () => {
@@ -36,6 +36,9 @@ function loadOrders() {
       });
 
       console.log('📦 Commandes Firestore chargées:', orders.length, orders);
+
+      // Sauvegarder aussi en localStorage pour les mises à jour
+      localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
 
       if (orders.length === 0) {
         ordersList.innerHTML = '<p class="loading">Aucune commande pour le moment</p>';
@@ -211,15 +214,17 @@ async function updateOrderStatus(orderId, newStatus) {
   console.log('🔄 Tentative de mise à jour - orderId:', orderId, 'newStatus:', newStatus);
 
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
-  const order = orders.find(o => o.id === orderId);
+  const order = orders.find(o => o.id == orderId);
 
   console.log('📦 Commande trouvée:', order);
 
   if (!order) {
     console.error('❌ Commande introuvable avec ID:', orderId);
+    showToast('Erreur: commande introuvable');
     return;
   }
 
+  const oldStatus = order.status;
   order.status = newStatus;
 
   // Ajouter à l'historique
@@ -231,6 +236,7 @@ async function updateOrderStatus(orderId, newStatus) {
 
   // Mettre à jour localStorage
   localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+  console.log('✅ Statut sauvegardé en localStorage:', oldStatus, '→', newStatus);
 
   // Mettre à jour dans Firestore
   if (order.docId) {
@@ -239,9 +245,26 @@ async function updateOrderStatus(orderId, newStatus) {
         status: newStatus,
         history: order.history
       });
-      console.log('✅ Statut mis à jour dans Firestore');
+      console.log('✅ Statut mis à jour dans Firestore avec docId:', order.docId);
     } catch (error) {
       console.error('❌ Erreur mise à jour Firestore:', error);
+    }
+  } else {
+    console.warn('⚠️ Pas de docId, cherche par id dans Firestore');
+    // Fallback: chercher par id si docId n'existe pas
+    try {
+      const q = query(collection(db, 'orders'), where('id', '==', orderId));
+      const snapshot = await getDocs(q);
+      if (!snapshot.empty) {
+        const docSnapshot = snapshot.docs[0];
+        await updateDoc(docSnapshot.ref, {
+          status: newStatus,
+          history: order.history
+        });
+        console.log('✅ Statut mis à jour dans Firestore');
+      }
+    } catch (error) {
+      console.error('❌ Erreur recherche Firestore:', error);
     }
   }
 
