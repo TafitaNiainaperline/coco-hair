@@ -3,8 +3,15 @@ import { db, collection, addDoc } from './firebase-config.js';
 
 let cart = [];
 
-// Exposer les fonctions globalement (avant DOMContentLoaded)
-const exposeGlobalFunctions = () => {
+// Charger le panier et la session au démarrage
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = sessionStorage.getItem('cocoHairCart');
+  if (saved) {
+    cart = JSON.parse(saved);
+    updateCart();
+  }
+
+  // Exposer les fonctions globalement
   window.addToCart = addToCart;
   window.toggleCart = toggleCart;
   window.removeFromCart = removeFromCart;
@@ -17,18 +24,6 @@ const exposeGlobalFunctions = () => {
   window.toggleNavMenu = toggleNavMenu;
   window.closeNavMenu = closeNavMenu;
   window.showSection = showSection;
-};
-
-// Charger le panier et la session au démarrage
-window.addEventListener('DOMContentLoaded', () => {
-  const saved = sessionStorage.getItem('cocoHairCart');
-  if (saved) {
-    cart = JSON.parse(saved);
-    updateCart();
-  }
-
-  // Exposer les fonctions après leur définition
-  exposeGlobalFunctions();
 
   // Ajouter l'événement du formulaire de contact
   const contactForm = document.getElementById('contactForm');
