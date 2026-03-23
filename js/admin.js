@@ -90,7 +90,7 @@ function displayOrders(orders, ordersList) {
         <span class="status-badge status-${order.status.split(' ')[0].toLowerCase()}">
           ${order.status}
         </span>
-        <select class="status-select" onclick="event.stopPropagation(); updateOrderStatus(${order.id}, this.value)">
+        <select class="status-select" onchange="event.stopPropagation(); updateOrderStatus(${order.id}, this.value); this.value='';">
           <option value="">Changer statut</option>
           <option value="en attente de paiement">En attente</option>
           <option value="payé">Payé</option>
@@ -202,37 +202,42 @@ async function updateOrderStatus(orderId, newStatus) {
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
   const order = orders.find(o => o.id === orderId);
 
-  if (order) {
-    order.status = newStatus;
+  if (!order) return;
 
-    // Ajouter à l'historique
-    if (!order.history) order.history = [];
-    order.history.push({
-      status: newStatus,
-      date: new Date().toLocaleString('fr-FR')
-    });
+  order.status = newStatus;
 
-    localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+  // Ajouter à l'historique
+  if (!order.history) order.history = [];
+  order.history.push({
+    status: newStatus,
+    date: new Date().toLocaleString('fr-FR')
+  });
 
-    // Mettre à jour dans Firestore
-    if (order.docId) {
-      try {
-        await updateDoc(doc(db, 'orders', order.docId), {
-          status: newStatus,
-          history: order.history
-        });
-        console.log('✅ Statut mis à jour dans Firestore');
-      } catch (error) {
-        console.error('❌ Erreur mise à jour Firestore:', error);
-      }
+  // Mettre à jour localStorage
+  localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+
+  // Mettre à jour dans Firestore
+  if (order.docId) {
+    try {
+      await updateDoc(doc(db, 'orders', order.docId), {
+        status: newStatus,
+        history: order.history
+      });
+      console.log('✅ Statut mis à jour dans Firestore');
+    } catch (error) {
+      console.error('❌ Erreur mise à jour Firestore:', error);
     }
+  }
 
-    loadOrders();
-    loadStats();
+  // Actualiser l'affichage
+  showToast(`Statut mis à jour: ${newStatus}`);
+  loadOrders();
+  loadStats();
 
-    // Actualiser le modal pour afficher les changements
+  // Actualiser le modal si ouvert
+  const modal = document.getElementById('orderModal');
+  if (modal && modal.classList.contains('active')) {
     viewOrder(orderId);
-    showToast(`Statut mis à jour: ${newStatus}`);
   }
 }
 
