@@ -29,22 +29,31 @@ body {
 .login-left {
   background: linear-gradient(135deg, var(--green-dark) 0%, var(--green-mid) 100%);
   color: var(--cream);
-  padding: 60px 40px;
+  padding: 80px 40px 60px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   text-align: center;
+  padding-top: 120px;
 }
 
 .login-branding {
-  margin-bottom: 60px;
+  margin-bottom: 0;
 }
 
 .login-logo {
   width: 100px;
   height: 100px;
   margin-bottom: 24px;
+  background: rgba(255,255,255,0.15);
+  padding: 15px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .login-left h1 {
@@ -71,16 +80,23 @@ body {
   max-width: 400px;
 }
 
+.login-branding {
+  background: rgba(82,183,136,0.2);
+  padding: 40px;
+  border-radius: 20px;
+  margin-bottom: 60px;
+}
+
 .login-info h3 {
   font-family: 'Cormorant Garamond', serif;
-  font-size: 32px;
-  margin-bottom: 16px;
+  font-size: 70px;
+  margin-bottom: 20px;
   font-weight: 700;
 }
 
 .login-info p {
-  font-size: 15px;
-  line-height: 1.8;
+  font-size: 20px;
+  line-height: 1.9;
   opacity: 0.95;
 }
 

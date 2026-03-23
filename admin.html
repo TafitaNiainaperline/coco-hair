@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin CocoHair — Gestion des commandes</title>
+  <title>Admin Huile Coco — Gestion des commandes</title>
   <link rel="stylesheet" href="css/admin.css">
 </head>
 <body>
@@ -13,9 +13,8 @@
 <div class="admin-container">
   <!-- Sidebar -->
   <aside class="admin-sidebar">
-    <button class="sidebar-close" onclick="toggleSidebar()">×</button>
     <div class="admin-logo">
-      <h2>CocoHair</h2>
+      <h2>Huile Coco</h2>
       <p>Admin</p>
     </div>
     <nav class="admin-nav">
@@ -97,7 +96,7 @@
         </div>
         <div class="form-group">
           <label>Email</label>
-          <input type="email" id="ownerEmail" value="cocohair@mada.mg">
+          <input type="email" id="ownerEmail" value="huilecoco@mada.mg">
         </div>
         <div class="form-group">
           <label>Ville de retrait</label>
@@ -122,12 +121,16 @@
 // Vérifier que seul l'admin peut accéder
 window.addEventListener('DOMContentLoaded', () => {
   const user = JSON.parse(localStorage.getItem('cocoHairUser') || 'null');
+  console.log('👤 Utilisateur trouvé:', user);
   if (!user || user.role !== 'admin') {
+    console.log('❌ Pas admin, redirection...');
     alert('Accès réservé à l\'admin');
     window.location.href = 'login.html';
+  } else {
+    console.log('✅ Admin connecté');
   }
 });
 </script>
-<script src="js/admin.js"></script>
+<script type="module" src="js/admin.js"></script>
 </body>
 </html>

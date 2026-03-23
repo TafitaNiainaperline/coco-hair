@@ -1,3 +1,6 @@
+// Import Firebase
+import { db, collection, addDoc } from './firebase-config.js';
+
 let cart = [];
 
 // Charger le panier et la session au démarrage
@@ -13,11 +16,26 @@ window.addEventListener('DOMContentLoaded', () => {
   if (contactForm) {
     contactForm.addEventListener('submit', handleContactForm);
   }
+
+  // Ajouter animation au clic sur les cartes produit (mobile)
+  const productCards = document.querySelectorAll('.product-card');
+  productCards.forEach(card => {
+    card.addEventListener('click', function() {
+      this.classList.add('clicked');
+      setTimeout(() => {
+        this.classList.remove('clicked');
+      }, 500);
+    });
+  });
 });
 
 // Animation des cartes "Comment utiliser"
-window.addEventListener('load', () => {
+function initAnimations() {
   const howCards = document.querySelectorAll('.how-card');
+  if (howCards.length === 0) {
+    setTimeout(initAnimations, 100);
+    return;
+  }
   howCards.forEach((card, index) => {
     setTimeout(() => {
       card.style.animation = 'none';
@@ -26,7 +44,11 @@ window.addEventListener('load', () => {
       }, 10);
     }, index * 150);
   });
-});
+}
+
+window.addEventListener('load', initAnimations);
+document.addEventListener('DOMContentLoaded', initAnimations);
+setTimeout(initAnimations, 500);
 
 function addToCart(name, price, img, btn) {
   const existing = cart.find(i => i.name === name);
@@ -103,13 +125,17 @@ function updateCart() {
 }
 
 function toggleNavMenu() {
-  const menu = document.getElementById('navMenu');
-  menu.classList.toggle('active');
+  const sidebar = document.getElementById('navSidebar');
+  const overlay = document.getElementById('navOverlay');
+  sidebar.classList.toggle('active');
+  overlay.classList.toggle('active');
 }
 
 function closeNavMenu() {
-  const menu = document.getElementById('navMenu');
-  menu.classList.remove('active');
+  const sidebar = document.getElementById('navSidebar');
+  const overlay = document.getElementById('navOverlay');
+  sidebar.classList.remove('active');
+  overlay.classList.remove('active');
 }
 
 function toggleCart(e) {
@@ -216,7 +242,7 @@ function closeCheckout() {
   if (modal) modal.remove();
 }
 
-function confirmCheckout(total) {
+async function confirmCheckout(total) {
   const name = document.getElementById('checkoutName').value;
   const phone = document.getElementById('checkoutPhone').value;
   const city = document.getElementById('checkoutCity').value;
@@ -254,9 +280,22 @@ function confirmCheckout(total) {
     ]
   };
 
-  const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
-  orders.push(order);
-  localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+  // Sauvegarder dans Firestore
+  try {
+    await addDoc(collection(db, 'orders'), order);
+    console.log('✅ Commande sauvegardée dans Firestore:', order);
+
+    // Garder aussi dans localStorage comme backup
+    const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
+    orders.push(order);
+    localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+  } catch (error) {
+    console.error('❌ Erreur sauvegarde Firestore:', error);
+    // Fallback: sauvegarder juste en localStorage
+    const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
+    orders.push(order);
+    localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
+  }
 
   // Envoyer notification au propriétaire
   sendNotificationToOwner(order);
@@ -325,8 +364,8 @@ EN ATTENTE DE PAIEMENT via MVola/Orange Money`;
 
   // 2. Envoyer email au propriétaire (si EmailJS est configuré)
   if (typeof emailjs !== 'undefined') {
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-      to_email: 'cocohair@mada.mg',
+    emailjs.send('service_l6s6rs9', 'template_ownry6p', {
+      to_email: 'tafitaperl@gmail.com',
       order_id: order.id,
       customer_name: order.customer.name,
       customer_phone: order.customer.phone,
@@ -355,7 +394,7 @@ Après paiement, votre commande sera livrée ${deliveryLabel.toLowerCase()}.
 
 Merci d'avoir choisi CocoHair!`;
 
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_CLIENT_TEMPLATE_ID', {
+    emailjs.send('service_l6s6rs9', 'YOUR_CLIENT_TEMPLATE_ID', {
       to_email: order.customer.email,
       customer_name: order.customer.name,
       message: clientMessage
@@ -383,13 +422,9 @@ function handleContactForm(e) {
 
   // Envoyer le message par email
   if (typeof emailjs !== 'undefined') {
-    emailjs.send('YOUR_SERVICE_ID', 'YOUR_TEMPLATE_ID', {
-      to_email: 'cocohair@mada.mg',
-      from_name: name,
-      from_email: email,
-      from_phone: phone,
-      message: message,
-      subject: `Nouveau message de contact de ${name}`
+    emailjs.send('service_l6s6rs9', 'template_27cc71w', {
+      name: name,
+      title: `${email} - ${phone} - ${message}`
     }).then(
       response => {
         showToast('Message envoyé avec succès!');
@@ -404,4 +439,15 @@ function handleContactForm(e) {
     // Si EmailJS n'est pas configuré, afficher un message
     showToast('Service de messagerie non configuré');
   }
+}
+
+function handleFormSubmit(e) {
+  e.preventDefault();
+  showToast('Message envoyé avec succès!');
+  document.querySelector('.contact-form').reset();
+
+  // Soumettre le formulaire à Formspree après le délai du toast
+  setTimeout(() => {
+    document.querySelector('.contact-form').submit();
+  }, 1500);
 }

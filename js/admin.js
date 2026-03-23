@@ -1,3 +1,6 @@
+// Import Firebase
+import { db, collection, query, orderBy, onSnapshot, updateDoc, deleteDoc, doc } from './firebase-config.js';
+
 // Charger les commandes au démarrage
 window.addEventListener('DOMContentLoaded', () => {
   loadOrders();
@@ -5,17 +8,68 @@ window.addEventListener('DOMContentLoaded', () => {
   loadSettings();
 });
 
+// Rafraîchir les commandes chaque 30 secondes
+setInterval(() => {
+  loadOrders();
+  loadStats();
+}, 30000);
+
+// Recharger quand on revient sur la page (tab switch)
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    loadOrders();
+    loadStats();
+  }
+});
+
 function loadOrders() {
+  const ordersList = document.getElementById('ordersList');
+
+  try {
+    // Charger depuis Firestore avec real-time updates
+    const q = query(collection(db, 'orders'), orderBy('id', 'desc'));
+
+    onSnapshot(q, (snapshot) => {
+      const orders = [];
+      snapshot.forEach((doc) => {
+        orders.push({ id: doc.data().id, docId: doc.id, ...doc.data() });
+      });
+
+      console.log('📦 Commandes Firestore chargées:', orders.length, orders);
+
+      if (orders.length === 0) {
+        ordersList.innerHTML = '<p class="loading">Aucune commande pour le moment</p>';
+        return;
+      }
+
+      displayOrders(orders, ordersList);
+    }, (error) => {
+      console.error('❌ Erreur Firestore:', error);
+      // Fallback: charger depuis localStorage
+      loadOrdersFromLocalStorage();
+    });
+  } catch (error) {
+    console.error('❌ Erreur chargement Firestore:', error);
+    loadOrdersFromLocalStorage();
+  }
+}
+
+function loadOrdersFromLocalStorage() {
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
   const ordersList = document.getElementById('ordersList');
+
+  console.log('📦 Commandes localStorage chargées:', orders.length);
 
   if (orders.length === 0) {
     ordersList.innerHTML = '<p class="loading">Aucune commande pour le moment</p>';
     return;
   }
 
-  // Trier par date décroissante (plus récentes d'abord)
   orders.sort((a, b) => b.id - a.id);
+  displayOrders(orders, ordersList);
+}
+
+function displayOrders(orders, ordersList) {
 
   ordersList.innerHTML = orders.map((order, index) => {
     const itemNames = order.items.map(i => i.name).join(', ');
@@ -302,7 +356,7 @@ function loadStats() {
 function loadSettings() {
   const settings = JSON.parse(localStorage.getItem('cocoHairSettings') || '{}');
   document.getElementById('ownerPhone').value = settings.phone || '+261 34 70 20 583';
-  document.getElementById('ownerEmail').value = settings.email || 'cocohair@mada.mg';
+  document.getElementById('ownerEmail').value = settings.email || 'huilecoco@mada.mg';
   document.getElementById('pickupCity').value = settings.city || 'Fianarantsoa';
 }
 
