@@ -687,7 +687,7 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
   height: 100vh;
   background: var(--green-dark);
   color: var(--cream);
-  padding: 20px;
+  padding: 12px;
   transform: translateX(-100%);
   transition: transform 0.3s ease;
   z-index: 998;
@@ -745,15 +745,17 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
 .nav-links {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .nav-link {
-  display: block;
-  padding: 12px 14px;
-  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
   text-decoration: none;
-  color: var(--gold);
+  color: rgba(255,255,255,0.7);
   transition: all 0.2s;
   font-size: 14px;
   font-weight: 500;
@@ -767,6 +769,12 @@ footer { background: var(--green-dark); padding: 80px 60px 40px; }
 .nav-link.active {
   background: var(--green-light);
   color: var(--green-dark);
+}
+
+.nav-link svg {
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
 }
 
 .cart-btn-mobile {
