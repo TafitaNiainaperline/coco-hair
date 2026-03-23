@@ -69,6 +69,15 @@ function loadOrdersFromLocalStorage() {
   displayOrders(orders, ordersList);
 }
 
+function handleStatusChange(orderId, selectElement) {
+  event.stopPropagation();
+  const newStatus = selectElement.value;
+  if (newStatus) {
+    updateOrderStatus(orderId, newStatus);
+    selectElement.value = '';
+  }
+}
+
 function displayOrders(orders, ordersList) {
 
   ordersList.innerHTML = orders.map((order, index) => {
@@ -90,7 +99,7 @@ function displayOrders(orders, ordersList) {
         <span class="status-badge status-${order.status.split(' ')[0].toLowerCase()}">
           ${order.status}
         </span>
-        <select class="status-select" onchange="event.stopPropagation(); updateOrderStatus(${order.id}, this.value); this.value='';">
+        <select class="status-select" id="select-${order.id}" onchange="handleStatusChange(${order.id}, this)">
           <option value="">Changer statut</option>
           <option value="en attente de paiement">En attente</option>
           <option value="payé">Payé</option>
@@ -199,10 +208,17 @@ function closeOrderModal() {
 async function updateOrderStatus(orderId, newStatus) {
   if (!newStatus) return;
 
+  console.log('🔄 Tentative de mise à jour - orderId:', orderId, 'newStatus:', newStatus);
+
   const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
   const order = orders.find(o => o.id === orderId);
 
-  if (!order) return;
+  console.log('📦 Commande trouvée:', order);
+
+  if (!order) {
+    console.error('❌ Commande introuvable avec ID:', orderId);
+    return;
+  }
 
   order.status = newStatus;
 
@@ -524,6 +540,7 @@ window.showSection = showSection;
 window.viewOrder = viewOrder;
 window.closeOrderModal = closeOrderModal;
 window.updateOrderStatus = updateOrderStatus;
+window.handleStatusChange = handleStatusChange;
 window.deleteOrder = deleteOrder;
 window.contactCustomer = contactCustomer;
 window.filterOrders = filterOrders;
