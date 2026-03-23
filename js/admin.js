@@ -6,6 +6,7 @@ window.addEventListener('DOMContentLoaded', () => {
   loadOrders();
   loadStats();
   loadSettings();
+  migrateStatusLabels();
 });
 
 // Rafraîchir les commandes chaque 30 secondes
@@ -21,6 +22,46 @@ document.addEventListener('visibilitychange', () => {
     loadStats();
   }
 });
+
+async function migrateStatusLabels() {
+  try {
+    const q = query(collection(db, 'orders'));
+    const snapshot = await getDocs(q);
+
+    snapshot.forEach(async (docSnapshot) => {
+      const order = docSnapshot.data();
+      let needsUpdate = false;
+
+      // Vérifier si le statut contient l'ancien format
+      if (order.status === 'en attente de paiement') {
+        order.status = 'en attente';
+        needsUpdate = true;
+      }
+
+      // Vérifier l'historique
+      if (order.history && Array.isArray(order.history)) {
+        order.history = order.history.map(entry => ({
+          ...entry,
+          status: entry.status === 'en attente de paiement' ? 'en attente' : entry.status
+        }));
+        needsUpdate = true;
+      }
+
+      // Mettre à jour si changements nécessaires
+      if (needsUpdate) {
+        await updateDoc(docSnapshot.ref, {
+          status: order.status,
+          history: order.history || []
+        });
+        console.log('✅ Migration statut:', order.id);
+      }
+    });
+
+    console.log('✅ Migration des statuts complétée');
+  } catch (error) {
+    console.error('❌ Erreur migration:', error);
+  }
+}
 
 function loadOrders() {
   const ordersList = document.getElementById('ordersList');
