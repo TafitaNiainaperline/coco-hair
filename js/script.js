@@ -229,7 +229,7 @@ function checkout() {
             <div class="payment-methods">
               <div class="payment-method">
                 <span class="method-label">MVola</span>
-                <span class="method-value">+261 34 70 20 583</span>
+                <span class="method-value">+261 34 70 205 83</span>
               </div>
             </div>
           </div>
