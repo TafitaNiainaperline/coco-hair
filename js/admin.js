@@ -150,7 +150,7 @@ function viewOrder(orderId) {
 
     <div class="order-detail-section">
       <h3>Statut actuel</h3>
-      <select class="status-select" style="width:100%;padding:12px;font-size:14px;" onchange="updateOrderStatus(${order.id}, this.value)">
+      <select id="statusSelect-${order.id}" class="status-select" style="width:100%;padding:12px;font-size:14px;" onchange="updateOrderStatus(${order.id}, this.value)">
         <option value="en attente de paiement" ${order.status === 'en attente de paiement' ? 'selected' : ''}>En attente de paiement</option>
         <option value="payé" ${order.status === 'payé' ? 'selected' : ''}>Payé</option>
         <option value="expédié" ${order.status === 'expédié' ? 'selected' : ''}>Expédié</option>
@@ -208,6 +208,13 @@ function updateOrderStatus(orderId, newStatus) {
     localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
     loadOrders();
     loadStats();
+
+    // Mettre à jour le select sans recharger le modal
+    const statusSelect = document.getElementById(`statusSelect-${orderId}`);
+    if (statusSelect) {
+      statusSelect.value = newStatus;
+    }
+
     viewOrder(orderId);
     showToast(`Statut mis à jour: ${newStatus}`);
   }
