@@ -1,7 +1,20 @@
-// Import Firebase
-import { db, collection, addDoc } from './firebase-config.js';
+// Backend API configuration
+const API_URL = 'http://localhost:3000/api';
 
 let cart = [];
+
+// API helper function
+async function callAPI(endpoint, method = 'GET', data = null) {
+  const options = {
+    method,
+    headers: { 'Content-Type': 'application/json' }
+  };
+  if (data) options.body = JSON.stringify(data);
+
+  const response = await fetch(`${API_URL}${endpoint}`, options);
+  if (!response.ok) throw new Error(`API error: ${response.statusText}`);
+  return response.json();
+}
 
 // Charger le panier et la session au démarrage
 window.addEventListener('DOMContentLoaded', () => {
@@ -290,16 +303,16 @@ async function confirmCheckout(total) {
     ]
   };
 
-  // Sauvegarder dans Firestore
+  // Sauvegarder via le backend
   try {
-    await addDoc(collection(db, 'orders'), order);
+    await callAPI('/orders', 'POST', order);
 
     // Garder aussi dans localStorage comme backup
     const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
     orders.push(order);
     localStorage.setItem('cocoHairOrders', JSON.stringify(orders));
   } catch (error) {
-    console.error('Erreur sauvegarde Firestore:', error);
+    console.error('Erreur sauvegarde commande:', error);
     // Fallback: sauvegarder juste en localStorage
     const orders = JSON.parse(localStorage.getItem('cocoHairOrders') || '[]');
     orders.push(order);
