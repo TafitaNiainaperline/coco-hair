@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const admin = require('firebase-admin');
+const AraryPay = require('@ariary/pay');
+const AraryNotification = require('@ariary/notification');
 require('dotenv').config();
 
 const app = express();
@@ -16,6 +18,15 @@ admin.initializeApp({
 });
 
 const db = admin.firestore();
+
+// Initialize Ariary
+AraryPay.config({
+  secret: process.env.ARIARY_SECRET_KEY,
+});
+
+AraryNotification.config({
+  secret: process.env.ARIARY_SECRET_KEY,
+});
 
 // Routes
 app.get('/api/health', (req, res) => {
@@ -64,23 +75,31 @@ app.put('/api/orders/:id', async (req, res) => {
   }
 });
 
-// SMS route (placeholder for Twilio)
+// SMS route (Ariary Notification)
 app.post('/api/sms', async (req, res) => {
   try {
     const { phone, message } = req.body;
-    // TODO: Implement Twilio SMS
-    res.json({ success: true, message: 'SMS would be sent here' });
+    await AraryNotification.send({
+      phone,
+      message,
+    });
+    res.json({ success: true, message: 'SMS sent' });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// Payment route (placeholder for Stripe)
+// Payment route (Ariary Pay)
 app.post('/api/payment', async (req, res) => {
   try {
-    const { amount, orderId } = req.body;
-    // TODO: Implement Stripe payment
-    res.json({ success: true, message: 'Payment would be processed here' });
+    const { amount, orderId, phone } = req.body;
+    const payment = await AraryPay.initiate({
+      amount,
+      orderId,
+      phone,
+      metadata: { orderId }
+    });
+    res.json({ success: true, paymentId: payment.id });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
