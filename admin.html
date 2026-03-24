@@ -123,11 +123,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const user = JSON.parse(localStorage.getItem('cocoHairUser') || 'null');
   console.log('👤 Utilisateur trouvé:', user);
   if (!user || user.role !== 'admin') {
-    console.log('❌ Pas admin, redirection...');
     alert('Accès réservé à l\'admin');
     window.location.href = 'login.html';
   } else {
-    console.log('✅ Admin connecté');
   }
 });
 </script>
